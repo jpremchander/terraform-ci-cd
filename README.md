@@ -1,4 +1,4 @@
-Terraform Practical Lab 10
+Terraform Practical Lab 10 with github workflow terraform ci cd
 Description:
 The project demonstrates advanced capabilities of Terraform, such as loops (count and for_each), functions, expressions, and modular configurations. The infrastructure configuration provided includes the following key components:
 
