@@ -96,7 +96,7 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
-# DB Subnet Group with Subnets in Multiple AZs
+# DB Subnet Group with Subnets in Multiple AZs for one region
 resource "aws_db_subnet_group" "public_subnet_group" {
   name = "public-db-subnet-group"
   subnet_ids = [
