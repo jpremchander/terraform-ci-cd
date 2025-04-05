@@ -1,9 +1,9 @@
 variable "core_count" {
   type    = number
-  default = 0
+  default = 1
 }
 
 variable "thread_count" {
   type    = number
-  default = 0
+  default = 2
 }
