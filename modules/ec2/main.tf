@@ -1,10 +1,31 @@
-resource "aws_instance" "practicallab4_ec2_server" {
-  ami                    = var.ami_id
-  instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
-  key_name               = var.key_name
-  vpc_security_group_ids = [var.security_group_id]
+# modules/ec2/main.tf
 
+resource "aws_security_group" "ec2_sg" {
+  name_prefix = "ec2-sg-"
+  description = "Security group for EC2 instance"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks
+  }
+}
+
+resource "aws_instance" "ec2_instance" {
+  ami             = var.ami_id
+  instance_type   = var.instance_type
+  subnet_id       = var.subnet_id
+  security_groups = [var.security_group_id]
+  key_name        = var.key_name
   user_data = <<-EOF
   #!/bin/bash
   yum install -y httpd
@@ -14,6 +35,6 @@ resource "aws_instance" "practicallab4_ec2_server" {
   EOF
 
   tags = {
-    Name = "PracticalLab4-EC2-Server"
+    Name = "PracticalLab9-EC2-Server"
   }
 }

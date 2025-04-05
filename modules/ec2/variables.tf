@@ -1,5 +1,7 @@
+# modules/ec2/variables.tf
+
 variable "ami_id" {
-  description = "AMI ID to use for the EC2 instance"
+  description = "AMI ID for the EC2 instance"
   type        = string
 }
 
@@ -9,17 +11,20 @@ variable "instance_type" {
 }
 
 variable "subnet_id" {
-  description = "The VPC subnet ID to launch the EC2 instance in"
+  description = "Subnet ID for the EC2 instance"
   type        = string
 }
 
 variable "security_group_id" {
-  description = "Security group ID to assign to the EC2 instance"
+  description = "Security group ID for the EC2 instance"
   type        = string
 }
 
 variable "key_name" {
-  description = "Name of the SSH key pair to associate with the instance"
+  description = "Key pair name for SSH access to EC2 instance"
   type        = string
-  default     = ""
+}
+
+variable "allowed_cidr_blocks" {
+  type = list(string)
 }

@@ -1,54 +1,41 @@
-provider "aws" {
-  region = "ca-central-1"
-}
-
-# VPC Module
 module "vpc" {
   source         = "./modules/vpc"
-  cidr_block     = "10.0.0.0/16"
-  subnet_cidr_1a = "10.0.1.0/24"
-  subnet_cidr_1b = "10.0.2.0/24"
+  cidr_block     = var.cidr_block
+  subnet_cidr_1a = var.subnet_cidr_1a
+  subnet_cidr_1b = var.subnet_cidr_1b
 }
 
-# Security Module
 module "security" {
   source              = "./modules/security"
   vpc_id              = module.vpc.vpc_id
-  allowed_cidr_blocks = ["0.0.0.0/0"]
+  allowed_cidr_blocks = var.allowed_cidr_blocks
 }
 
-# EC2 Module
 module "ec2" {
   source             = "./modules/ec2"
-  ami_id            = "ami-0abcdef1234567890"
-  instance_type     = "t2.micro"
-  subnet_id         = module.vpc.subnet_1a_id
-  security_group_id = module.security.ec2_security_group_id
+  ami_id            = var.ami_id
+  instance_type     = var.instance_type
+  subnet_id         = module.vpc.subnet_1a_id  # Use the output subnet_1a_id
+  security_group_id = module.security.ec2_security_group_id  # Use the output security group id
+  key_name          = var.key_name
+  allowed_cidr_blocks = var.allowed_cidr_blocks
 }
 
-# ALB Module
-module "alb" {
-  source      = "./modules/alb"
-  vpc_id      = module.vpc.vpc_id
-  lb_sg_id    = module.security.lb_security_group_id
-  subnet_1a_id = module.vpc.subnet_1a_id
-  subnet_1b_id = module.vpc.subnet_1b_id
-  instance_id  = module.ec2.instance_id
-}
-
-# 🔹 RDS Module
-module "rds" {
-  source                  = "./modules/rds"
-  db_subnet_group_name    = "rds-subnet-group"
-  subnet_ids              = [module.vpc.subnet_1a_id, module.vpc.subnet_1b_id]
-  db_parameter_group_name = "rds-parameter-group"
-  db_family               = "postgres13"
-  db_identifier           = "practicallab4-db"
-  db_engine_version       = "13.7"
-  db_instance_class       = "db.t3.micro"
-  db_storage             = 20
-  db_username            = "admin"
-  db_password            = "StrongPassword123!"
-  vpc_security_group_ids = [module.security.rds_security_group_id]
-  publicly_accessible    = false
+resource "aws_db_instance" "rds_instance" {
+  allocated_storage       = var.db_storage
+  instance_class          = var.db_instance_class
+  engine                  = var.db_engine
+  engine_version          = var.db_engine_version
+  username                = var.db_username
+  password                = var.db_password
+  db_name                 = var.db_name
+  db_subnet_group_name    = aws_db_subnet_group.default.name
+  vpc_security_group_ids  = module.security.rds_security_group_id  # Use the output security group id for RDS
+  publicly_accessible     = var.publicly_accessible
+  parameter_group_name    = var.db_parameter_group_name
+  identifier              = var.db_identifier
+  multi_az                = var.multi_az
+  backup_retention_period = var.backup_retention_period
+  storage_type            = var.storage_type
+  apply_immediately       = var.apply_immediately
 }

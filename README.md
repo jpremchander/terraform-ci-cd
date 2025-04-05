@@ -1,100 +1,110 @@
-Terraform Practical Lab 10 with github workflow terraform ci cd
-
-******************************************************************************************
+Terraform Practical Lab 9
 
 Description:
-The project demonstrates advanced capabilities of Terraform, such as loops (count and for_each), functions, expressions, and modular configurations. The infrastructure configuration provided includes the following key components:
 
-Multiple EC2 Instances launched using loops (count and for_each).
+The project highlights some of the advanced capabilities of Terraform such as loops (count and for_each) functions, expressions, and modular configurations. The infrastructure configuration is given below:
+=================================================================================================================================================================================================
+Description:
 
-Dynamic ingress and egress rules in security groups.
+The project highlights some of the advanced capabilities of Terraform such as loops (count and for_each), functions, expressions, and modular configurations. The infrastructure configuration is given below:
 
-VPC Configuration with internet gateway, subnets, and route tables.
+* Multiple EC2 instances launched using loops.
 
-ALB (Application Load Balancer) for routing traffic to EC2 instances.
+* Dynamic ingress and egress rules in security groups.
 
-RDS (Relational Database Service) setup with security group and subnet groups.
+* VPC configuration with internet gateway, subnets, and route tables.
 
-Use of Terraform built-in functions for greater automation, flexibility, and reusability.
+* ALB (Application Load Balancer) to route traffic to EC2 instances.
+
+* RDS (Relational Database Service) setup with security group and subnet groups.
+
+* Terraform built-in functions for greater automation, flexibility, and reusability.
 
 Prerequisites:
-Terraform CLI installed.
 
-AWS credentials configuration (using AWS CLI or environment variables).
+Terraform CLI installed
 
-Familiarity with Terraform fundamentals (e.g., providers, resources, modules, and state).
+AWS credentials configuration (using AWS CLI or environment variables)
 
+Terraform fundamentals familiarity (e.g., providers, resources, modules, and state)
+=======================================================================================================================
 Project Structure:
-graphql
-Copy
-/Practical-Lab-8/
+
+/PROG8830-PracticalLab9/
   ├── main.tf                # Main configuration to tie everything together
   ├── variables.tf           # Main variables, e.g., VPC CIDR, EC2 configurations, etc.
-  ├── def.tfvars             # Default variables
+  ├── dev.tfvars             # def variables (similary we can create variable files based upon our environments)
   ├── outputs.tf             # Outputs, like instance IDs and ALB DNS
   ├── modules/               # Modular code for EC2, security, VPC, ALB, and RDS
-  │   ├── ec2/               # Module to spin up multiple EC2 instances
+│   ├── ec2/               # Module to spin up multiple instances in EC2
   │   │   ├── main.tf
   │   │   ├── variables.tf
   │   │   ├── outputs.tf
-  │   ├── security/          # Security module to create security groups
+│   ├── security/      # Security module to create security groups
   │   │   ├── main.tf
   │   │   ├── variables.tf
   │   │   ├── outputs.tf
-  │   ├── vpc/               # Module for creating VPC, subnets, and IGW
+│   ├── vpc/          # Module for creating VPC, subnets, and IGW
   │   │   ├── main.tf
   │   │   ├── variables.tf
   │   │   ├── outputs.tf
-  │   ├── alb/               # Module for Application Load Balancer creation
+│   ├── alb/               # Module for Application Load Balancer creation
   │   │   ├── main.tf
   │   │   ├── variables.tf
   │   │   ├── outputs.tf
-  │   ├── rds/               # Module for RDS instance creation
+│   ├── rds/               # Module for RDS instance creation
   │   │   ├── main.tf
   │   │   ├── variables.tf
   │   │   ├── outputs.tf
-  ├── README.md              # Project Description
+├── README.md              # Project Description
+
+=======
 Terraform Commands to Execute:
-Initialize Terraform Configurations in the backend:
 
-bash
-Copy
-terraform init
-Plan infrastructure for your AWS Provider based on the configuration scripts:
+1. Initialize Terraform Configurations in Backend:
 
-bash
-Copy
-terraform plan
-Apply the configuration to create the resources:
+# terraform init
 
-bash
-Copy
-terraform apply
-Destroy the resources when complete (Optional – if any modifications or to clean out):
+This command initializes the working directory containing Terraform configuration files. It downloads the necessary provider plugins and prepares the environment.
 
-bash
-Copy
-terraform destroy
-Terraform Loops (count and for_each)
+2. Plan Infrastructure for Your AWS Provider Using dev.tfvars:
+
+# terraform plan -var-file="dev.tfvars"
+
+This command generates an execution plan based on the current configuration and the variables provided in dev.tfvars.
+
+3. Apply the Configuration to Create Resources Using dev.tfvars:
+
+# terraform apply -var-file="dev.tfvars"
+
+This command applies the Terraform plan and provisions the infrastructure as defined in your configuration files and the variables in dev.tfvars.
+
+4. Destroy the Resources After Completion (Optional) Using dev.tfvars:
+
+# terraform destroy -var-file="dev.tfvars"
+
+This command will destroy the resources created by the apply command, cleaning up your AWS infrastructure.
+
+============
+
+Terraform Loops (count and for_each):
+
 count:
-Used to create multiple similar resources, like EC2 instances.
+To create multiple similar resources, for example, EC2 instances.
 
-Example:
 
-hcl
-Copy
 resource "aws_instance" "example" {
   count         = 3
   ami           = var.ami_id
   instance_type = var.instance_type
 }
+
+===============================================
+
 for_each:
+
 Used to create dynamic resources from a map or set of values.
 
-Example:
-
-hcl
-Copy
 resource "aws_security_group" "sg" {
   for_each = var.security_group_rules
   name_prefix = each.key
@@ -106,33 +116,38 @@ resource "aws_security_group" "sg" {
     cidr_blocks = each.value.cidr_blocks
   }
 }
-Functions in Terraform Configurations
+
+=======
+
+Functions in Terraform Configurations:
 String Functions:
 upper(): Converts all input strings to uppercase.
 
 lower(): Converts all input strings to lowercase.
 
 Numeric Functions:
+
 min(): Returns the lowest of a series of numbers.
 
-max(): Returns the maximum value from a list of numbers.
+max(): Gives the maximum of a list of numbers.
+
+=======
 
 Collection Functions:
-concat(): Merges several lists or sets into a single list.
+>>>>>>> 16c2a0ae5e5f04165f184e6ccc3c5a5a15048c7d
+concat(): Merges several lists or sets.
 
 length(): Returns the length of a list, string, or map.
 
+=======
 Networking Functions:
 cidrsubnet(): Generates a new subnet within a given CIDR block.
 
-Example:
-
-hcl
-Copy
 locals {
   new_subnet_cidr = cidrsubnet(var.cidr_block, 8, 1)
 }
-RDS (Relational Database Service) Module
+RDS (Relational Database Service) Module:
+
 The RDS module is responsible for:
 
 Creating an RDS PostgreSQL instance with necessary security configurations.
@@ -142,39 +157,52 @@ Attaching an RDS security group with controlled ingress/egress rules.
 Placing the RDS instance within the correct subnet group.
 
 Sample RDS Configuration:
-hcl
-Copy
+
 resource "aws_db_instance" "rds_instance" {
   identifier              = "rds-instance"
-  engine                  = "postgres"
-  engine_version          = "16.3"
-  instance_class          = "db.t3.micro"
-  allocated_storage       = 5
-  username                = "pgadmin"
-  password                = "pgadmin2k25"
-  publicly_accessible     = true
-  vpc_security_group_ids  = [module.security.rds_security_group_id]
-  db_subnet_group_name    = "public-db-subnet-group"
+  engine                 = "postgres"
+  engine_version         = "16.3"
+  instance_class         = "db.t3.micro"
+  allocated_storage      = 5
+
+  username               = "pgadmin"
+  password               = "pgadmin2k25"
+  publicly_accessible    = true
+  vpc_security_group_ids = [module.security.rds_security_group_id]
+  db_subnet_group_name   = "public-db-subnet-group"
 }
+=======
 Lessons Learned:
+
 Terraform Functions:
-Using functions in Terraform can automate tasks, simplify code, and improve reusability. For example, the use of join(), max(), min(), and concat() simplifies variable management and resource allocation.
+
+Using functions in Terraform can be beneficial as they help automate processes, simplify your code, and enhance reusability.
 
 Modularization:
-Modularizing Terraform configurations promotes organization and modularity. It helps in reusing code blocks for different parts of the infrastructure (e.g., EC2, VPC, ALB, RDS).
+
+Modularizing your Terraform code enhances organization and logic flow. It’s like constructing a building using blocks.
 
 ALB:
-The Application Load Balancer module is crucial in distributing traffic across multiple EC2 instances, ensuring better availability and scalability.
+
+The Application Load Balancer module is the best example of a load balancer for traffic distributed to multiple EC2 instances.
 
 RDS Security:
-Managing RDS security groups separately ensures that database access is tightly controlled and not exposed publicly without necessary restrictions.
+
+Managing RDS security groups separately ensures controlled database access, preventing unauthorized exposure.
+
+=========================================================================
 
 Repository:
-[GitHub Repo Link - https://github.com/jpremchander/PROG8830.git]
+
+[GitHub Repo Link - https://github.com/jpremchander/PROG8830-PracticalLab9]
 
 Created By:
-Group 2
+======
+Group 2:
+======
 
 Prem Chander Jebastian
 Rishi Patel
 Twinkle Mishra
+
+=========================================================================================================================
