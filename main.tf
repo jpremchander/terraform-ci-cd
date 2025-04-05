@@ -2,7 +2,7 @@ provider "aws" {
   region = "ca-central-1"
 }
 
-# 🔹 VPC Module
+# VPC Module
 module "vpc" {
   source         = "./modules/vpc"
   cidr_block     = "10.0.0.0/16"
@@ -10,14 +10,14 @@ module "vpc" {
   subnet_cidr_1b = "10.0.2.0/24"
 }
 
-# 🔹 Security Module
+# Security Module
 module "security" {
   source              = "./modules/security"
   vpc_id              = module.vpc.vpc_id
   allowed_cidr_blocks = ["0.0.0.0/0"]
 }
 
-# 🔹 EC2 Module
+# EC2 Module
 module "ec2" {
   source             = "./modules/ec2"
   ami_id            = "ami-0abcdef1234567890"
@@ -26,7 +26,7 @@ module "ec2" {
   security_group_id = module.security.ec2_security_group_id
 }
 
-# 🔹 ALB Module
+# ALB Module
 module "alb" {
   source      = "./modules/alb"
   vpc_id      = module.vpc.vpc_id
