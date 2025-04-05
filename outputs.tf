@@ -1,13 +1,7 @@
-# outputs.tf (Root)
-
 output "vpc_id" {
-  value = module.vpc.vpc_id
+  value = aws_vpc.prod_vpc.id
 }
 
-output "ec2_instance_id" {
-  value = module.ec2.instance_id
-}
-
-output "rds_instance_id" {
-  value = module.rds.db_instance_id
+output "db_instance_endpoint" {
+  value = aws_db_instance.postgres_db.endpoint
 }
